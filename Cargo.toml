@@ -1,0 +1,32 @@
+[package]
+name = "unixfs-v1"
+version = "0.1.0"
+authors = ["David Craven <david@craven.ch>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+description = "unixfs v1 implementation"
+repository = "https://github.com/rs-ipfs/rust-ipfs"
+
+[features]
+default = ["filetime"]
+
+[dependencies]
+either = "1.6.1"
+filetime = { version = "0.2.14", optional = true }
+libipld = { version = "0.12.0", default-features = false }
+multihash = { version = "0.14.0", default-features = false, features = ["sha2"] }
+quick-protobuf = "0.8.0"
+
+[dev-dependencies]
+criterion = "0.3.4"
+hex-literal = "0.3.1"
+libc = "0.2.96"
+tar = "0.4.35"
+
+[[bench]]
+name = "ingest-tar"
+harness = false
+
+[[bench]]
+name = "adder"
+harness = false
