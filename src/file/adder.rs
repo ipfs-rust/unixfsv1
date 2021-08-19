@@ -1,4 +1,4 @@
-use crate::pb::{FlatUnixFs, PBLink, UnixFs, UnixFsType};
+use crate::pb::{FlatUnixFs, PBLink, UnixFs, UnixFsType, DAG_PB};
 use alloc::borrow::Cow;
 use core::fmt;
 use libipld::multihash::{Code, MultihashDigest};
@@ -314,7 +314,7 @@ fn render_and_hash(flat: &FlatUnixFs<'_>) -> (Cid, Vec<u8>) {
     flat.write_message(&mut writer)
         .expect("unsure how this could fail");
     let mh = Code::Sha2_256.digest(&out);
-    let cid = Cid::new_v0(mh).expect("sha2_256 is the correct multihash for cidv0");
+    let cid = Cid::new_v1(DAG_PB, mh);
     (cid, out)
 }
 
@@ -707,11 +707,11 @@ mod tests {
         // while verifying the root Cid would be *enough* this is easier to eyeball, ... not really
         // that much but ...
         let expected = [
-            "QmfVyMoStzTvdnUR7Uotzh82gmL427q9z3xW5Y8fUoszi4",
-            "QmdPyW4CWE3QBkgjWfjM5f7Tjb3HukxVuBXZtkqAGwsMnm",
-            "QmNhDQpphvMWhdCzP74taRzXDaEfPGq8vWfFRzD7mEgePM",
-            "Qmc5m94Gu7z62RC8waSKkZUrCCBJPyHbkpmGzEePxy2oXJ",
-            "QmRJHYTNvC3hmd9gJQARxLR1QMEincccBV53bBw524yyq6",
+            "bafybeih67h7bqbeufm26dhqulib7tsovzkojs7o2bkkbn47vcwss6gz44e",
+            "bafybeig7xffxllfsbd6uq46yjbzk6wf5mxdtc5ykpvga33vubchiooil7y",
+            "bafybeiafisl24tujqewigj3kjdr6m6ibhj4iw7aowatrfxyvbfoafvwnfq",
+            "bafybeigmgmwown66u7j5pqancojrc5ry2pwzmnlvqnwg2rfcjfi6irgplu",
+            "bafybeicbvfcf3ys43v7u4obvdypbdzdsddiqvagpwldjvlj7kyrkwkpm3u",
         ]
         .iter()
         .map(|key| {
@@ -721,7 +721,17 @@ mod tests {
         })
         .collect::<Vec<_>>();
 
-        assert_eq!(blocks_received, expected);
+        if blocks_received != expected {
+            for ((actual_cid, actual_block), (expected_cid, expected_block)) in
+                blocks_received.into_iter().zip(expected.into_iter())
+            {
+                assert_eq!(
+                    actual_cid, expected_cid,
+                    "Expected\n\t{}\n\t{:02x?}\nActual\n\t{}\n\t{:02x?}",
+                    expected_cid, expected_block, actual_cid, actual_block
+                );
+            }
+        }
     }
 
     #[test]
@@ -747,7 +757,7 @@ mod tests {
 
         assert_eq!(
             blocks_received.last().unwrap().0.to_string(),
-            "QmRQ6NZNUs4JrCT2y7tmCC1wUhjqYuTssB8VXbbN3rMffg"
+            "bafybeiedgegddvmfxlnikgwgxet6am5xkrhforeqb6wxyga3p7jmmge27u"
         );
     }
 
@@ -762,7 +772,7 @@ mod tests {
             let blocks_received = adder.collect_blocks(content, amt);
             assert_eq!(
                 blocks_received.last().unwrap().0.to_string(),
-                "QmYSLcVQqxKygiq7x9w1XGYxU29EShB8ZemiaQ8GAAw17h",
+                "bafybeiedxvsh3dwkublmenfbir3li4jf52opwcf5dgpi62h6yv4gd7klku",
                 "amt: {}",
                 amt
             );
@@ -782,7 +792,7 @@ mod tests {
         assert_eq!(blocks[0].1.as_slice(), &hex!("0a 04 08 02 18 00"));
         assert_eq!(
             blocks[0].0.to_string(),
-            "QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH"
+            "bafybeif7ztnhq65lumvvtr4ekcwd2ifwgm3awq4zfr3srh462rwyinlb4y"
         );
     }
 
@@ -828,7 +838,7 @@ mod tests {
 
         assert_eq!(
             last_blocks.last().unwrap().0.to_string(),
-            "QmcHNWF1d56uCDSfJPA7t9fadZRV9we5HGSTGSmwuqmMP9"
+            "bafybeiai6dvlhomgaargeb677jd7bugp7pscqeakbvtapdlpvsfuedojqa"
         );
     }
 
@@ -862,7 +872,7 @@ mod tests {
 
         assert_eq!(
             last_block.0.to_string(),
-            "QmdgQac8c6Bo3MP5bHAg2yQ25KebFUsmkZFvyByYzf8UCB"
+            "bafybeihkyby6yehjk25b3havpq4jxsfqxf54jizpjqodovxiuwav62uzpy"
         );
 
         assert_eq!(blocks_count, 175);
