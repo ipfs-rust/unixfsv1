@@ -185,6 +185,8 @@ impl BufferingTreeBuilder {
 
 #[cfg(test)]
 mod tests {
+    use crate::pb::DAG_PB;
+
     use super::{
         super::OwnedTreeNode, BufferingTreeBuilder, Metadata, TreeBuildingFailed, TreeOptions,
     };
@@ -219,16 +221,28 @@ mod tests {
         let expected = vec![
             (
                 "a/b/c/d/e/f",
-                "Qmbgf44ztW9wLcGNRNYGinGQB6SQDQtbHVbkM5MrWms698",
+                "bafybeiggi7xxndgcvvn776odlzbyo42os3m2ns7flmd2zoqjdtxhxjj5pm",
             ),
             (
                 "a/b/c/d/e",
-                "Qma1hCr3CuPRAq2Gw4DCNMqsi42Bjs4Bt1MGSS57kNh144",
+                "bafybeienpcl75unpkin7sublc6b4liop2efhscxxlxgipncfvnxydsu6ya",
             ),
-            ("a/b/c/d", "QmUqaYatcJqiSFdykHXGh4Nog1eMSfDJBeYzcG67KV5Ri4"),
-            ("a/b/c", "QmYwaNBaGpDCNN9XpHmjxVPHmEXZMw9KDY3uikE2UU5fVB"),
-            ("a/b", "QmeAzCPig4o4gBLh2LvP96Sr8MUBrsu2Scw9MTq1EvTDhY"),
-            ("a", "QmSTUFaPwJW8xD4KNRLLQRqVTYtYC29xuhYTJoYPWdzvKp"),
+            (
+                "a/b/c/d",
+                "bafybeigwwu5zfiu7trjhnulcejlpo7ytinr4iyqasetnmw3sko5l36wjqm",
+            ),
+            (
+                "a/b/c",
+                "bafybeig7jp4rbhaejauys6drkl66c7gcsp26gn3hdryezex5j4jng4ppda",
+            ),
+            (
+                "a/b",
+                "bafybeiethbkivdfv6yvvl4ho4tv2ogbyn4uzblvtkjuqksu2acbk32gwf4",
+            ),
+            (
+                "a",
+                "bafybeiaadgmref7r6eqwxv66nmwfoy3qxv57gdwmk4xnierff5bobsvsny",
+            ),
         ];
 
         verify_results(expected, actual);
@@ -289,7 +303,7 @@ mod tests {
             actual,
             &[(
                 "".to_string(),
-                "QmdbWuhpVCX9weVMMqvVTMeGwKMqCNJDbx7ZK1zG36sea7".to_string()
+                "bafybeihcvyze4cpjen52osvvcqyhlgtbe456g6lyudqa37tcbctkl4x6kq".to_string()
             )]
         );
     }
@@ -315,7 +329,7 @@ mod tests {
             actual,
             &[(
                 "".to_string(),
-                "QmQBseoi3b2FBrYhjM2E4mCF4Q7C8MgCUbzAbGNfyVwgNk".to_string()
+                "bafybeia3o7eaqkxuxpdotmu5su3rmdvmuimpo7vpb23ulpzg7od7j3nlte".to_string()
             )]
         );
     }
@@ -392,7 +406,10 @@ mod tests {
             .collect::<Result<Vec<_>, _>>()
             .unwrap();
 
-        let expected = vec![("a", "QmPMDMPG8dbHDC9GuvqWr9pfruLnp4GZCAWrskwCmenVQa")];
+        let expected = vec![(
+            "a",
+            "bafybeiapacmj5oggpmkv7c4d2ujfokpdmnczg2gtr5ddumhz7j4sdy7734",
+        )];
 
         verify_results(expected, actual);
     }
@@ -440,6 +457,6 @@ mod tests {
     /// Returns a quick and dirty sha2-256 of the given number as a Cidv0
     fn some_cid(number: usize) -> Cid {
         let mh = Code::Sha2_256.digest(&number.to_le_bytes());
-        Cid::new_v0(mh).unwrap()
+        Cid::new_v1(DAG_PB, mh)
     }
 }

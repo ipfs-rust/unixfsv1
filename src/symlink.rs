@@ -31,6 +31,8 @@ pub fn serialize_symlink_block(target_path: &str, block_buffer: &mut Vec<u8>) {
 
 #[cfg(test)]
 mod tests {
+    use crate::pb::DAG_PB;
+
     use super::serialize_symlink_block;
     use core::convert::TryFrom;
     use libipld::multihash::{Code, MultihashDigest};
@@ -46,11 +48,11 @@ mod tests {
         serialize_symlink_block("b", &mut buf);
 
         let mh = Code::Sha2_256.digest(&buf);
-        let cid = Cid::new_v0(mh).expect("sha2_256 is the correct multihash for cidv0");
+        let cid = Cid::new_v1(DAG_PB, mh);
 
         assert_eq!(
             cid.to_string(),
-            "QmfLJN6HLyREnWr7QQNmgmuNziUhcbwUopkHQ8gD3pMfp6"
+            "bafybeih4p6wgtxnujy4wq3wp2hwmnrjkwzj7iit6km7oosroeohywikd2m"
         );
     }
 
@@ -78,7 +80,7 @@ mod tests {
 
         assert_eq!(
             otn.cid.to_string(),
-            "QmZDVQHwjHwA4SyzEDtJLNxmZeJVK1W8BWFAHV61x2Rs19"
+            "bafybeibsalmqatls4cakc5ivjn3yawtb66h5ztg33w2us7oomnlt2ugzgu"
         );
     }
 
@@ -111,7 +113,7 @@ mod tests {
 
         assert_eq!(
             otn.cid.to_string(),
-            "QmZDVQHwjHwA4SyzEDtJLNxmZeJVK1W8BWFAHV61x2Rs19"
+            "bafybeibsalmqatls4cakc5ivjn3yawtb66h5ztg33w2us7oomnlt2ugzgu"
         );
     }
 

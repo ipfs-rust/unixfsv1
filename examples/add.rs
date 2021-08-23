@@ -130,7 +130,7 @@ struct Stats {
 impl fmt::Display for Stats {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         let hash = self.last.as_ref().unwrap().hash();
-        let cidv1 = Cid::new_v0(hash.to_owned()).unwrap();
+        let cidv1 = Cid::new_v1(0x70, *hash);
         write!(
             fmt,
             "{} blocks, {} block bytes, {} or {}",

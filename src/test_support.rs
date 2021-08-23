@@ -1,5 +1,6 @@
 use core::convert::TryFrom;
 use hex_literal::hex;
+use libipld::cid::Version;
 use libipld::multihash::{Code, MultihashDigest};
 use libipld::Cid;
 use std::collections::HashMap;
@@ -9,11 +10,23 @@ pub struct FakeBlockstore {
     blocks: HashMap<Cid, Vec<u8>>,
 }
 
+fn to_v0(cid: Cid) -> Cid {
+    if cid.version() == Version::V1 {
+        Cid::new_v0(*cid.hash()).expect("Test hashes were created with sha256")
+    } else {
+        cid
+    }
+}
 impl FakeBlockstore {
     pub fn get_by_cid<'a>(&'a self, cid: &Cid) -> &'a [u8] {
-        self.blocks
-            .get(cid)
-            .unwrap_or_else(|| panic!("cid not found: {}", cid))
+        if let Some(x) = self.blocks.get(cid) {
+            x
+        } else {
+            let v0 = to_v0(*cid);
+            self.blocks
+                .get(&v0)
+                .expect(&*format!("cid not found: {} ({})", cid, v0))
+        }
     }
 
     pub fn get_by_raw<'a>(&'a self, key: &[u8]) -> &'a [u8] {
@@ -48,7 +61,9 @@ impl FakeBlockstore {
             // fo ob ar  \n
             // QmRJHYTNvC3hmd9gJQARxLR1QMEincccBV53bBw524yyq6
             &hex!("12280a221220fef9fe1804942b35e19e145a03f9c9d5ca9c997dda0a9416f3f515a52f1b3ce11200180a12280a221220dfb94b75acb208fd4873d84872af58bd65c731770a7d4c0deeb4088e87390bfe1200180a12280a221220054497ae4e89812c83276a48e3e679013a788b7c0eb02712df15095c02d6cd2c1200180a12280a221220cc332ceb37dea7d3d7c00d1393117638d3ed963575836c6d44a24951e444cf5d120018090a0c080218072002200220022001"),
-            // first bytes: fo or QmfVyMoStzTvdnUR7Uotzh82gmL427q9z3xW5Y8fUoszi4
+        // bafybeicbvfcf3ys43v7u4obvdypbdzdsddiqvagpwldjvlj7kyrkwkpm3u
+            // root for "foobar\n" cidv1
+            &hex!("122a0a2401701220fef9fe1804942b35e19e145a03f9c9d5ca9c997dda0a9416f3f515a52f1b3ce11200180a122a0a2401701220df b94b75acb208fd4873d84872af58bd65c731770a7d4c0deeb4088e87390bfe1200180a122a0a2401701220054497ae4e89812c83276a48 e3e679013a788b7c0eb02712df15095c02d6cd2c1200180a122a0a2401701220cc332ceb37dea7d3d7c00d1393117638d3ed963575836c 6d44a24951e444cf5d120018090a0c080218072002200220022001"),            // first bytes: fo or QmfVyMoStzTvdnUR7Uotzh82gmL427q9z3xW5Y8fUoszi4
             &hex!("0a0808021202666f1802"),
             // ob or QmdPyW4CWE3QBkgjWfjM5f7Tjb3HukxVuBXZtkqAGwsMnm
             &hex!("0a08080212026f621802"),
