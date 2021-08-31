@@ -1,4 +1,4 @@
-#![warn(rust_2018_idioms, missing_docs)]
+#![warn(rust_2018_idioms)]
 //! ipfs-unixfs: UnixFs tree support in Rust.
 //!
 //! The crate aims to provide a blockstore implementation independent of the UnixFs implementation by
@@ -24,7 +24,7 @@ pub mod dir;
 pub use dir::{resolve, LookupError, MaybeResolved, ResolveError};
 
 mod pb;
-use pb::{UnixFs, UnixFsType};
+pub use pb::{FlatUnixFs, PBLink, PBNode, UnixFs, UnixFsType};
 
 /// Support operations for the dag-pb, the outer shell of UnixFS
 pub mod dagpb;
