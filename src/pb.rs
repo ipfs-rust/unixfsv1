@@ -5,19 +5,19 @@ use core::ops::Range;
 use quick_protobuf::{errors::Result as ProtobufResult, Writer, WriterBackend};
 
 pub(crate) mod merkledag;
-pub(crate) use merkledag::PBLink;
-pub(crate) use merkledag::PBNode;
+pub use merkledag::PBLink;
+pub use merkledag::PBNode;
 
 pub(crate) mod unixfs;
-pub(crate) use unixfs::mod_Data::DataType as UnixFsType;
-pub(crate) use unixfs::Data as UnixFs;
+pub use unixfs::mod_Data::DataType as UnixFsType;
+pub use unixfs::Data as UnixFs;
 
 /// DAG-PB multicodec code
 pub(crate) const DAG_PB: u64 = 0x70;
 
 /// Failure cases for nested serialization, which allows recovery of the outer `PBNode` when desired.
 #[derive(Debug)]
-pub(crate) enum ParsingFailed<'a> {
+pub enum ParsingFailed<'a> {
     InvalidDagPb(quick_protobuf::Error),
     NoData(PBNode<'a>),
     InvalidUnixFs(quick_protobuf::Error, PBNode<'a>),
@@ -84,9 +84,9 @@ impl<'a> TryFrom<&'a [u8]> for merkledag::PBNode<'a> {
 
 /// Combined dag-pb (or MerkleDAG) with UnixFs payload.
 #[derive(Debug)]
-pub(crate) struct FlatUnixFs<'a> {
-    pub(crate) links: Vec<PBLink<'a>>,
-    pub(crate) data: UnixFs<'a>,
+pub struct FlatUnixFs<'a> {
+    pub links: Vec<PBLink<'a>>,
+    pub data: UnixFs<'a>,
 }
 
 impl<'a> quick_protobuf::message::MessageWrite for FlatUnixFs<'a> {
@@ -119,7 +119,7 @@ impl<'a> quick_protobuf::message::MessageWrite for FlatUnixFs<'a> {
 }
 
 impl<'a> FlatUnixFs<'a> {
-    pub(crate) fn try_parse(data: &'a [u8]) -> Result<Self, ParsingFailed<'a>> {
+    pub fn try_parse(data: &'a [u8]) -> Result<Self, ParsingFailed<'a>> {
         Self::try_from(data)
     }
 }
