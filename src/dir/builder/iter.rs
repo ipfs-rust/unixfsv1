@@ -143,7 +143,7 @@ impl PostOrderIterator {
 
         buffer.truncate(size);
 
-        let mh = Code::Sha2_256.digest(&buffer);
+        let mh = Code::Sha2_256.digest(buffer);
         let cid = Cid::new_v1(DAG_PB, mh);
 
         let combined_from_links = links
@@ -189,7 +189,7 @@ impl PostOrderIterator {
                     };
 
                     self.pending.push(Visited::PostRoot { leaves });
-                    self.pending.extend(children.drain(..));
+                    self.pending.append(children);
                 }
                 Visited::Descent {
                     node,
@@ -217,7 +217,7 @@ impl PostOrderIterator {
                         index,
                     });
 
-                    self.pending.extend(children.drain(..));
+                    self.pending.append(children);
                 }
                 Visited::Post {
                     parent_id,
@@ -238,7 +238,7 @@ impl PostOrderIterator {
                         Err(e) => return Some(Err(e)),
                     };
 
-                    self.cid = Some(leaf.link.clone());
+                    self.cid = Some(leaf.link);
                     self.total_size = leaf.total_size;
 
                     {
@@ -285,7 +285,7 @@ impl PostOrderIterator {
                         Err(e) => return Some(Err(e)),
                     };
 
-                    self.cid = Some(leaf.link.clone());
+                    self.cid = Some(leaf.link);
                     self.total_size = leaf.total_size;
 
                     return Some(Ok(TreeNode {

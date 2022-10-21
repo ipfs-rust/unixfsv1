@@ -629,7 +629,7 @@ impl<'a> FileSegment<'a> {
 
 impl AsRef<[u8]> for FileSegment<'_> {
     fn as_ref(&self) -> &[u8] {
-        &self.bytes
+        self.bytes
     }
 }
 
@@ -871,11 +871,11 @@ mod tests {
         while walker.should_continue() {
             let (next, _) = walker.pending_links();
 
-            let block = blocks.get_by_cid(&next);
+            let block = blocks.get_by_cid(next);
 
             counter += 1;
 
-            match walker.next(&block, &mut None).unwrap() {
+            match walker.next(block, &mut None).unwrap() {
                 ContinuedWalk::File(segment, ..) => {
                     match counter {
                         1 => {
@@ -903,6 +903,7 @@ mod tests {
     }
 
     trait CountsExt {
+        #[allow(clippy::ptr_arg)]
         fn checked_removal(&mut self, key: &PathBuf, expected: usize);
     }
 

@@ -222,6 +222,7 @@ fn walk(blocks: ShardedBlockStore, mut path: IpfsPath) -> Result<Option<Cid>, Er
     Ok(Some(root))
 }
 
+#[allow(clippy::large_enum_variant)]
 enum Error {
     OpeningFailed(IoError),
     Other(IoError),

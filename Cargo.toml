@@ -13,8 +13,8 @@ default = ["filetime"]
 [dependencies]
 either = "1.6.1"
 filetime = { version = "0.2.14", optional = true }
-libipld = { version = "0.13.0", default-features = false }
-multihash = { version = "0.16.0", default-features = false, features = ["sha2"] }
+libipld = { version = "0.14.0", default-features = false }
+multihash = { version = "0.16.3", default-features = false, features = ["sha2"] }
 quick-protobuf = "0.8.0"
 
 [dev-dependencies]

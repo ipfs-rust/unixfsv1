@@ -48,6 +48,7 @@ pub struct InvalidCidInLink {
     /// Error from the attempted conversion
     pub source: libipld::cid::Error,
     /// This is to deny creating these outside of the crate
+    #[allow(dead_code)]
     hidden: (),
 }
 

@@ -15,7 +15,7 @@ impl<'a> CustomFlatUnixFs<'a> {
     fn mapped(&self) -> impl Iterator<Item = NamedLeafAsPBLink<'_>> + '_ {
         self.links
             .iter()
-            .map(|triple| triple.as_ref().map(|l| NamedLeafAsPBLink(l)).unwrap())
+            .map(|triple| triple.as_ref().map(NamedLeafAsPBLink).unwrap())
     }
 }
 
@@ -76,7 +76,7 @@ impl<'a> MessageWrite for WriteableCid<'a> {
             Version::V0 => hash_len,
             Version::V1 => {
                 let version_len = 1;
-                let codec_len = sizeof_varint(u64::from(self.0.codec()));
+                let codec_len = sizeof_varint(self.0.codec());
                 version_len + codec_len + hash_len
             }
         }
@@ -90,7 +90,7 @@ impl<'a> MessageWrite for WriteableCid<'a> {
                 // directory; at least go-ipfs 0.5 `ipfs files` denies making a cbor link
                 // but happily accepts and does refs over one.
                 w.write_u8(1)?;
-                w.write_varint(u64::from(self.0.codec()))?;
+                w.write_varint(self.0.codec())?;
             }
         }
 

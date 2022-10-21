@@ -214,7 +214,7 @@ impl FileAdder {
     /// every block in the near-ish future.
     pub fn finish(mut self) -> impl Iterator<Item = (Cid, Vec<u8>)> {
         let last_leaf = Self::flush_buffered_leaf(
-            &self.block_buffer.as_slice(),
+            self.block_buffer.as_slice(),
             &mut self.unflushed_links,
             true,
         );
@@ -261,7 +261,7 @@ impl FileAdder {
 
         let link = Link {
             depth: 0,
-            target: cid.clone(),
+            target: cid,
             total_size: total_size as u64,
             file_size: input.len() as u64,
         };
@@ -583,7 +583,7 @@ impl BalancedCollector {
                 let index = last_overwrite.map(|i| i + 1).unwrap_or(first_at);
                 pending[index] = Link {
                     depth: level + 1,
-                    target: cid.clone(),
+                    target: cid,
                     total_size: nested_total_size + vec.len() as u64,
                     file_size: nested_size,
                 };
